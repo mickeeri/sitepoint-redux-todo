@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import Todo from './Todo';
 import { connect } from 'react-redux';
 import * as actions from '../actions';
+import * as database from '../database';
 
 export class TodoList extends Component {
   constructor(props) {
@@ -9,16 +10,22 @@ export class TodoList extends Component {
     this.onSubmit = this.onSubmit.bind(this);
   }
 
-  onSubmit(e) {
+  componentDidMount() {
     const { addTodo } = this.props;
+    database.todosRef.on('child_added', (data) => {
+      addTodo(data.key, data.val().text);
+    });
+  }
+
+  onSubmit(e) {
     const input = e.target;
     const text = input.value;
     const isEnterKey = (e.which === 13);
     const isLongEnough = text.trim();
 
     if (isEnterKey && isLongEnough) {
+      database.addTodo(input.value);
       input.value = '';
-      addTodo(text);
     }
   }
 
@@ -36,10 +43,10 @@ export class TodoList extends Component {
         <ul className="todo-list">
           {todos.map(todo => (
             <Todo
-              key={todo.get('id')}
+              key={todo.get('key')}
               text={todo.get('text')}
               completed={todo.get('completed')}
-              onClick={() => toggleTodo(todo.get('id'))}
+              onClick={() => toggleTodo(todo.get('key'))}
             />
           ))}
         </ul>
@@ -52,6 +59,7 @@ TodoList.propTypes = {
   todos: PropTypes.object.isRequired,
   addTodo: PropTypes.func.isRequired,
   toggleTodo: PropTypes.func.isRequired,
+  fetchTodos: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = (state) => ({
