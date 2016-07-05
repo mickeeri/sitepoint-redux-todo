@@ -1,15 +1,15 @@
 import React from 'react';
+import reducer from './reducers';
+import { createStore } from 'redux';
 import { render } from 'react-dom';
+import { Provider } from 'react-redux';
 import TodoList from './components/TodoList';
 
-const dummyTodos = [
-  { id: 0, completed: true, text: 'make components' },
-  { id: 1, completed: false, text: 'design actions' },
-  { id: 2, completed: false, text: 'implement reducer' },
-  { id: 3, completed: false, text: 'connect components' },
-];
+const store = createStore(reducer);
 
 render(
-  <TodoList todos={dummyTodos} />,
+  <Provider store={store}>
+    <TodoList />
+  </Provider>,
   document.getElementById('root')
 );

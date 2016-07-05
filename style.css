@@ -3,6 +3,11 @@ html, body, input, button {
   font-size: 20px;
 }
 
+.todo-container {
+  margin-left: 50px;
+  width: 30%;
+}
+
 .todo-list {
   margin: 0;
   padding: 0;
